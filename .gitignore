@@ -1,0 +1,60 @@
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.csr
+*.srl
+*credentials*
+*password*
+*secret*
+*token*
+
+# Elastic-generated sensitive material
+http-ca.zip
+elastic-stack-ca.zip
+elastic-certificates.*
+certs/
+pki/
+ca/
+generated/
+backups/
+
+# Logs and runtime data
+*.log
+logs/
+data/
+elasticsearch-data/
+kibana-data/
+
+# Archives and exports that may contain sensitive material
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.bak
+*.backup
+
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# Keep intentionally sanitized examples
+!examples/**/*.pem.example
+!examples/**/*.env.example
