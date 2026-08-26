@@ -4,9 +4,16 @@
 
 This document records the lab's custom HTTP TLS work for Elasticsearch. It is documentation—not a source of private keys or certificate bundles.
 
-![PKI design](../diagrams/pki-design.png)
+## Source-of-truth warning
 
-## Established design
+The two linked planning diagrams were created before the implementation was completed. They are retained for design-history value, but they are **not authoritative descriptions of the deployed paths or component status**:
+
+- [Original PKI design proposal](../diagrams/pki-design-proposal.png) uses proposed locations that differ from the implemented nested `ca/ca`, `generated/http`, and `/etc/elasticsearch/certs-managed` layout.
+- [Original certificate inventory plan](../diagrams/certificate-inventory-plan.png) labels Kibana and Fleet Server certificates as active. Those rows are planned targets: Kibana remains in progress and Fleet remains planned.
+
+The confirmed facts and evidence below take precedence over both planning images.
+
+## Confirmed design
 
 | Item | Value |
 |---|---|
@@ -18,8 +25,11 @@ This document records the lab's custom HTTP TLS work for Elasticsearch. It is do
 | Elasticsearch version | 9.3.3 |
 | Elasticsearch node | `elastic-siem` |
 | HTTP protocol | HTTPS |
+| Elasticsearch certificate deployment | `/etc/elasticsearch/certs-managed` |
+| Kibana certificate | In progress / not recorded as active |
+| Fleet Server certificate | Planned / not active |
 
-Workspace layout:
+Top-level workspace layout:
 
 ```text
 /opt/elastic-pki/
@@ -29,6 +39,8 @@ Workspace layout:
 ├── generated/
 └── instances/
 ```
+
+The screenshots show implementation-specific nested paths beneath this top-level structure; use them together with the live host as the implementation record.
 
 ## Security model
 
@@ -65,9 +77,7 @@ A successful TLS deployment requires all of the following:
 
 ## Certificate lifecycle
 
-Maintain an inventory containing certificate purpose, subject, SANs, issuer, serial number, validity dates, storage path, owner, and renewal date. Rotate before expiry, revoke compromised certificates, and retest every dependent service after rotation.
-
-![Certificate lifecycle](../diagrams/certificate-inventory-lifecycle.png)
+Maintain a live inventory containing certificate purpose, subject, SANs, issuer, serial number, validity dates, storage path, owner, deployment state, and renewal date. Do not promote a planned certificate to active status until deployment and validation evidence exists.
 
 ## Limitation
 

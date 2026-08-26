@@ -12,6 +12,14 @@ All notable repository changes are recorded here. Dates use YYYY-MM-DD.
 - Add tested Elastic and Sigma detection rules.
 - Publish the first sanitized investigation report.
 
+## [0.2.1] - 2026-08-26
+
+### Fixed
+
+- Scoped credential-related ignore rules so legitimate detection content such as password-spray and token-theft rules remains trackable.
+- Labelled the original PKI design diagram as a superseded proposal where it conflicts with implemented paths.
+- Labelled Kibana and Fleet certificate rows in the original inventory image as planned rather than deployed current state.
+
 ## [0.2.0] - 2026-08-26
 
 ### Added

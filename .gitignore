@@ -1,7 +1,9 @@
-# Secrets and credentials
+# Environment files
 .env
 .env.*
 !.env.example
+
+# Private keys, certificates, and keystores
 *.key
 *.pem
 *.p12
@@ -10,10 +12,23 @@
 *.keystore
 *.csr
 *.srl
-*credentials*
-*password*
-*secret*
-*token*
+
+# Known credential and secret locations
+.credentials
+.credentials.*
+credentials/
+credentials.json
+credentials.yaml
+credentials.yml
+.password
+password.txt
+.secrets
+secrets/
+secrets.json
+secrets.yaml
+secrets.yml
+.token
+token.txt
 
 # Elastic-generated sensitive material
 http-ca.zip
