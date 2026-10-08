@@ -2,7 +2,7 @@
 
 A hands-on blue-team portfolio project for collecting Windows, Linux, and web-server telemetry in Elastic Security, engineering detections, and documenting investigations.
 
-> **Status:** Active build. Elasticsearch 9.3.3 is operational; the custom HTTP PKI work is documented. Kibana, Fleet, agent onboarding, log-source integrations, detections, and investigations remain in progress.
+> **Status:** Active build. Elasticsearch 9.3.3 is operational; the custom HTTP PKI work is documented. Kibana was reported running on 2026-08-26; its current connection and browser TLS still need repository evidence. Fleet, agent onboarding, log-source integrations, detections, and investigations remain unverified or planned. This repository audit does not verify the live VM.
 
 ## Objectives
 
@@ -18,10 +18,10 @@ A hands-on blue-team portfolio project for collecting Windows, Linux, and web-se
 |---|---|
 | SIEM server | Ubuntu 24.04, hostname `elastic-siem` |
 | Elasticsearch | 9.3.3, HTTPS enabled |
-| Kibana | Enrollment/configuration in progress |
+| Kibana | Reported running on 2026-08-26; fresh connection/TLS evidence pending |
 | Fleet / Elastic Agent | Planned |
 | PKI | Password-protected lab root CA and HTTP certificate workflow documented |
-| Network | NetworkManager with DHCP on `enp1s0` |
+| Network | `enp1s0`; last reported address `192.168.100.104/24`; current routing unverified |
 
 ## Repository map
 
@@ -51,6 +51,8 @@ A hands-on blue-team portfolio project for collecting Windows, Linux, and web-se
 10. [Troubleshooting](docs/10-troubleshooting.md)
 11. [Lessons learned](docs/11-lessons-learned.md)
 12. [Future intermediate-CA migration](docs/12-pki-migration-to-intermediate-ca.md)
+
+See [the follow-up audit](docs/13-repository-audit-2026-10-08.md), [certificate inventory](docs/14-certificate-inventory.md), and [asset provenance](docs/15-asset-provenance.md) for evidence limits and preservation checks.
 
 See [Screenshot Guide](screenshots/README.md) for the evidence naming standard and [CHANGELOG](CHANGELOG.md) for repository changes.
 

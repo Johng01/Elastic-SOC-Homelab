@@ -12,4 +12,4 @@
 8. False-positive assessment
 9. Lessons and detection improvements
 
-Store only sanitized reports in `reports/`. Do not publish credentials, tokens, personal data, private addresses, or operational secrets.
+Store only sanitized reports in `reports/`. Do not publish credentials, tokens, personal data or operational secrets. Synthetic or isolated RFC1918 lab addresses may remain when needed to explain evidence; redact real organizational topology and sensitive identifiers.

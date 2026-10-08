@@ -6,11 +6,28 @@ All notable repository changes are recorded here. Dates use YYYY-MM-DD.
 
 ### Planned
 
-- Complete Kibana enrollment and validation.
+- Capture fresh Kibana service, Elasticsearch CA trust, and browser TLS validation evidence.
 - Configure Fleet and onboard Windows/Linux agents.
 - Ingest web-server logs.
 - Add tested Elastic and Sigma detection rules.
 - Publish the first sanitized investigation report.
+
+## [0.3.0] - 2026-10-08
+
+### Changed
+
+- Audited the already merged restructuring and preserved the Fleet/Agent merge and existing naming.
+- Separated historical HTTP TLS evidence, transport configuration, reported Kibana service activity, and planned certificate deployment.
+- Scoped directory ignore rules to root-level workspaces while keeping private-key and archive exclusions.
+- Clarified proposed architecture and PKI diagram limitations.
+
+### Added
+
+- Follow-up audit, certificate inventory, diagram guide, complete PKI screenshot index, and asset hash manifest.
+
+### Preserved
+
+- All original documents and all 19 binary assets; no useful content deleted.
 
 ## [0.2.1] - 2026-08-26
 
