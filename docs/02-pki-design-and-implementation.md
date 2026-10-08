@@ -9,7 +9,10 @@ This document records the lab's custom HTTP TLS work for Elasticsearch. It is do
 The two linked planning diagrams were created before the implementation was completed. They are retained for design-history value, but they are **not authoritative descriptions of the deployed paths or component status**:
 
 - [Original PKI design proposal](../diagrams/pki-design-proposal.png) uses proposed locations that differ from the implemented nested `ca/ca`, `generated/http`, and `/etc/elasticsearch/certs-managed` layout.
-- [Original certificate inventory plan](../diagrams/certificate-inventory-plan.png) labels Kibana and Fleet Server certificates as active. Those rows are planned targets: Kibana remains in progress and Fleet remains planned.
+- [Original certificate inventory plan](../diagrams/certificate-inventory-plan.png) labels Kibana and Fleet Server certificates as active. Those rows are planned targets: browser-facing Kibana TLS remains unverified and Fleet remains planned. A running Kibana service is not proof of an active browser-facing certificate.
+- [Original PKI flow](../diagrams/pki-flow.png) is also conceptual: it does not prove that transport or Fleet certificates were signed by the custom root CA.
+
+See the [certificate inventory](14-certificate-inventory.md) for separate evidence states and exact HTTP paths.
 
 The confirmed facts and evidence below take precedence over both planning images.
 
@@ -25,8 +28,8 @@ The confirmed facts and evidence below take precedence over both planning images
 | Elasticsearch version | 9.3.3 |
 | Elasticsearch node | `elastic-siem` |
 | HTTP protocol | HTTPS |
-| Elasticsearch certificate deployment | `/etc/elasticsearch/certs-managed` |
-| Kibana certificate | In progress / not recorded as active |
+| Elasticsearch HTTP deployment | `/etc/elasticsearch/certs-managed/http/` |
+| Kibana browser-facing certificate | Deployment not established by repository evidence |
 | Fleet Server certificate | Planned / not active |
 
 Top-level workspace layout:
@@ -40,7 +43,7 @@ Top-level workspace layout:
 └── instances/
 ```
 
-The screenshots show implementation-specific nested paths beneath this top-level structure; use them together with the live host as the implementation record.
+The screenshots show implementation-specific nested paths beneath this top-level structure. The [indexed screenshot set](../screenshots/01-pki/README.md) records historical HTTP deployment evidence; revalidate the live host before treating those paths as current.
 
 ## Security model
 

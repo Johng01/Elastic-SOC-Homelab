@@ -6,6 +6,8 @@ The lab models a small SOC pipeline: endpoints and servers generate telemetry, E
 
 ![Lab architecture](../diagrams/lab-architecture.png)
 
+This is a topology proposal retained for design history. Its Fleet Server and endpoint boxes do not establish deployment. Elasticsearch has historical repository evidence; Kibana service activity is user-reported; endpoint ingestion remains to be evidenced.
+
 ## Components
 
 | System | Role | Telemetry |

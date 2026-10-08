@@ -12,7 +12,7 @@
 1. Record package versions and repository sources.
 2. Back up configuration and keystores before material changes.
 3. Bind services only to required interfaces.
-4. keep authentication and TLS enabled.
+4. Keep authentication and TLS enabled.
 5. Validate service health after every change.
 6. Never publish generated passwords or enrollment tokens.
 

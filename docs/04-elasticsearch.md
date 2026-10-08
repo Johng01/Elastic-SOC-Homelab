@@ -11,7 +11,7 @@
 | Transport bind | `0.0.0.0` |
 | HTTP security | TLS and authentication enabled |
 
-The TLS assets include `http_ca.crt`, `http.p12`, and `transport.p12`; relevant passwords are stored in the Elasticsearch keystore.
+Earlier lab records include `http_ca.crt`, `http.p12`, and `transport.p12`. Screenshot `pki-015` records a later custom HTTP PEM configuration under `certs-managed/http/` while transport still uses `certs/transport.p12`. Do not assume the older HTTP keystore is still the active HTTP configuration or that the transport issuer is the custom HTTP root. See the [certificate inventory](14-certificate-inventory.md).
 
 ## Hardening notes
 

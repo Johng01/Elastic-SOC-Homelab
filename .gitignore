@@ -1,9 +1,22 @@
-# Environment files
+# Environment and credential files (never put live secrets in examples)
 .env
 .env.*
 !.env.example
+.credentials
+.credentials.*
+credentials.json
+credentials.yaml
+credentials.yml
+.password
+password.txt
+.secrets
+secrets.json
+secrets.yaml
+secrets.yml
+.token
+token.txt
 
-# Private keys, certificates, and keystores
+# Private keys and containers. PEM may contain private keys: keep conservative.
 *.key
 *.pem
 *.p12
@@ -13,41 +26,25 @@
 *.csr
 *.srl
 
-# Known credential and secret locations
-.credentials
-.credentials.*
-credentials/
-credentials.json
-credentials.yaml
-credentials.yml
-.password
-password.txt
-.secrets
-secrets/
-secrets.json
-secrets.yaml
-secrets.yml
-.token
-token.txt
+# Root-level local secret/runtime workspaces; phase documentation stays trackable.
+/credentials/
+/secrets/
+/certs/
+/pki/
+/ca/
+/generated/
+/backups/
+/logs/
+/data/
+/elasticsearch-data/
+/kibana-data/
 
-# Elastic-generated sensitive material
+# Generated sensitive bundles and local exports
 http-ca.zip
+elastic-http.zip
+elastic-root-ca.zip
 elastic-stack-ca.zip
 elastic-certificates.*
-certs/
-pki/
-ca/
-generated/
-backups/
-
-# Logs and runtime data
-*.log
-logs/
-data/
-elasticsearch-data/
-kibana-data/
-
-# Archives and exports that may contain sensitive material
 *.zip
 *.tar
 *.tar.gz
@@ -55,8 +52,9 @@ kibana-data/
 *.7z
 *.bak
 *.backup
+*.log
 
-# Operating systems and editors
+# Editors and temporary files
 .DS_Store
 Thumbs.db
 *.swp
@@ -64,12 +62,10 @@ Thumbs.db
 *~
 .vscode/
 .idea/
-
-# Temporary files
-tmp/
-temp/
+/tmp/
+/temp/
 .cache/
 
-# Keep intentionally sanitized examples
+# Sanitized text examples only; these are not live PEM/env files.
 !examples/**/*.pem.example
 !examples/**/*.env.example
