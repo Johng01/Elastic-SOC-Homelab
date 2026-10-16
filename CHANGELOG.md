@@ -4,13 +4,45 @@ All notable repository changes are recorded here. Dates use YYYY-MM-DD.
 
 ## [Unreleased]
 
+### Added
+
+- Onboarded the Windows Enterprise Evaluation endpoint into Elastic Fleet using
+  the `windows-soc-policy` agent policy.
+- Verified Windows Security Event IDs 4624 and 4625 in Elasticsearch.
+- Created and validated SOC-WIN-001, a threshold detection rule for repeated
+  failed Windows authentication attempts.
+- Validated the rule using two controlled local authentication tests.
+- Added the SOC-WIN-001 detection documentation and sanitized investigation report.
+- Added references to the validated detection in the detection engineering,
+  incident investigation, detection-rules, and reports documentation.
+
+### Changed
+
+- Updated the Windows failed-logon detection status from Planned to
+  Validated — Local Authentication.
+- Strengthened `.gitignore` to recursively exclude nested credentials and
+  secrets directories.
+- Documented the distinction between source events in Discover and aggregated
+  threshold alerts.
+
+### Verified
+
+- Fleet Server and Windows Elastic Agent reported Healthy.
+- Windows Security Event ID 4625 ingestion was confirmed.
+- SOC-WIN-001 generated alerts for two different test usernames.
+- The second test produced six matching events.
+- The source address `::1` was verified in Windows and Elasticsearch.
+- The investigated test alert was closed following authorized-test classification.
+
 ### Planned
 
-- Capture fresh Kibana service, Elasticsearch CA trust, and browser TLS validation evidence.
-- Configure Fleet and onboard Windows/Linux agents.
+- Capture additional Kibana, Elasticsearch CA-trust, and browser TLS evidence.
+- Complete Linux agent onboarding.
 - Ingest web-server logs.
-- Add tested Elastic and Sigma detection rules.
-- Publish the first sanitized investigation report.
+- Add and validate Sigma detection rules.
+- Test remote authentication detection from Kali Linux.
+- Develop source-IP-focused authentication detections.
+- Add sanitized screenshots supporting SOC-WIN-001.
 
 ## [0.3.0] - 2026-10-08
 

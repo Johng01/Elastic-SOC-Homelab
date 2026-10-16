@@ -69,3 +69,9 @@ Thumbs.db
 # Sanitized text examples only; these are not live PEM/env files.
 !examples/**/*.pem.example
 !examples/**/*.env.example
+
+# Exclude sensitive directories recursively, including nested locations.
+**/credentials/
+**/secrets/
+**/.credentials/
+**/.secrets/

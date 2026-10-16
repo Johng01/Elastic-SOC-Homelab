@@ -2,7 +2,7 @@
 
 A hands-on blue-team portfolio project for collecting Windows, Linux, and web-server telemetry in Elastic Security, engineering detections, and documenting investigations.
 
-> **Status:** Active build. Elasticsearch 9.3.3 is operational; the custom HTTP PKI work is documented. Kibana was reported running on 2026-08-26; its current connection and browser TLS still need repository evidence. Fleet, agent onboarding, log-source integrations, detections, and investigations remain unverified or planned. This repository audit does not verify the live VM.
+> **Status (October 2026):** Active development on a Dell laptop running Ubuntu Desktop 26.04.1. The laptop hosts an operational Elastic Security 9.5.5 environment using KVM/libvirt. Fleet Server and Windows Elastic Agent are healthy, Windows Security logs are being ingested, and the SOC-WIN-001 failed-logon detection rule has been successfully validated. The original Dell PowerEdge R710 environment, running Elasticsearch and Kibana 9.3.3, is currently offline pending repair.
 
 ## Objectives
 
@@ -14,14 +14,36 @@ A hands-on blue-team portfolio project for collecting Windows, Linux, and web-se
 
 ## Current environment
 
+### Active SOC homelab — Dell laptop
+
 | Component | Current state |
 |---|---|
-| SIEM server | Ubuntu 24.04, hostname `elastic-siem` |
-| Elasticsearch | 9.3.3, HTTPS enabled |
-| Kibana | Reported running on 2026-08-26; fresh connection/TLS evidence pending |
-| Fleet / Elastic Agent | Planned |
-| PKI | Password-protected lab root CA and HTTP certificate workflow documented |
-| Network | `enp1s0`; last reported address `192.168.100.104/24`; current routing unverified |
+| Physical host | Dell laptop running Ubuntu Desktop 26.04.1 |
+| Virtualization | KVM/QEMU with libvirt |
+| SIEM VM | `elastic-siem` |
+| Elasticsearch | 9.5.5 — operational |
+| Kibana | 9.5.5 — operational |
+| Fleet Server | Operational |
+| Elastic Agent | Healthy on `elastic-siem` and `windows-client` |
+| Windows endpoint | Windows Enterprise Evaluation VM |
+| Windows telemetry | Security Event IDs 4624 and 4625 validated |
+| Detection engineering | SOC-WIN-001 validated |
+| Investigation | Authorized local authentication test completed |
+| Network | Isolated `lab-net`, `192.168.100.0/24` |
+
+### Original SOC environment — Dell PowerEdge R710
+
+| Component | Current state |
+|---|---|
+| Physical server | Dell PowerEdge R710 |
+| Operating system | Ubuntu Server |
+| Elasticsearch | 9.3.3 — previously operational |
+| Kibana | 9.3.3 — previously operational |
+| Availability | Offline pending repair |
+| Upgrade | To be evaluated after hardware restoration |
+
+The two environments are separate. The successful SOC-WIN-001 validation applies to the active laptop-based environment, not the currently offline R710.
+
 
 ## Repository map
 
@@ -60,14 +82,24 @@ See [Screenshot Guide](screenshots/README.md) for the evidence naming standard a
 
 This repository contains documentation and sanitized evidence only. It must never contain private keys, certificate archives, keystores, passwords, enrollment tokens, API keys, real public IP addresses, or unredacted personal data. See [.gitignore](.gitignore).
 
-## Planned detection use cases
+## Detection engineering progress
 
-- Windows Event ID 4625 failed-logon burst
-- Windows privilege-group and privilege-use events
-- Suspicious PowerShell and LOLBin execution
-- Linux SSH authentication failures
-- Linux `sudo` and account-change activity
-- Web reconnaissance and repeated error responses
+### Completed and validated
+
+- [SOC-WIN-001 — Multiple Failed Logon Attempts](detection-rules/SOC-WIN-001.md): Windows Event ID 4625 threshold detection.
+- [SOC-WIN-001 Investigation Report](reports/SOC-WIN-001-investigation.md): Authorized local authentication test, event correlation, source IP verification, and benign-positive classification.
+- [Detection evidence](screenshots/05-detection/README.md): Rule configuration, execution, and generated alert.
+- [Investigation evidence](screenshots/06-investigations/README.md): Windows authentication events and source IP analysis.
+
+### Planned detection use cases
+
+- Kali Linux remote authentication simulation.
+- Windows privilege-group and privilege-use events.
+- Suspicious PowerShell and LOLBin execution.
+- Linux SSH authentication failures.
+- Linux `sudo` and account-change activity.
+- Web reconnaissance and repeated error responses.
+
 
 ## Author
 
