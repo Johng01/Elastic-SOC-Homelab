@@ -14,6 +14,7 @@ testing and remote attack simulation.
 | Use case | Primary signal | State |
 |---|---|---|
 | Windows failed-logon burst | Event ID 4625 | Validated — Local Authentication |
+| Windows remote failed-logon burst | Event ID 4625, Logon Type 3, source IP | Validated — Remote Authentication |
 | Linux SSH brute force | Repeated authentication failures | Planned |
 | Privilege escalation | Windows privilege events / Linux sudo | Planned |
 | Suspicious process execution | Sysmon/process telemetry | Planned |
@@ -78,7 +79,7 @@ Investigation report:
 
 ### Known Limitations
 
-- Remote authentication testing from Kali Linux remains pending.
+- SOC-WIN-001 was validated using local authentication; remote source-IP detection is covered separately by SOC-WIN-002.
 - The rule groups authentication failures by username, not source IP.
 - Threshold alerts do not necessarily preserve all source-event fields.
 - The original event documents retain source IP information.
@@ -86,10 +87,79 @@ Investigation report:
   look-back do not constitute an exact five-minute sliding window.
 - The current query is restricted to `windows-client`.
 
+## SOC-WIN-002 — Multiple Remote Failed Logon Attempts
+
+**Status:** Validated against controlled remote RDP/NLA authentication failures.
+
+**Platform:** Windows Enterprise Evaluation.
+
+**Detection engine:** Elastic Security 9.5.5.
+
+**Data stream:** `logs-system.security-default`
+
+**Event ID:** 4625.
+
+**Logon Type:** 3 — Network.
+
+**Rule type:** Threshold.
+
+**Detection threshold:** Five or more matching events grouped by `source.ip`.
+
+**Execution interval:** Five minutes.
+
+**Additional look-back:** One minute.
+
+**Severity:** Medium.
+
+**Risk score:** 47.
+
+**MITRE ATT&CK:** Credential Access (TA0006), Brute Force (T1110).
+
+### SOC-WIN-002 Validation Results
+
+| Test | Source IP | Matching events | Result |
+|---|---|---|---|
+| Controlled RDP/NLA authentication failures | 192.168.100.245 | 5 | Alert generated |
+
+The test generated five failed authentication attempts from Kali Linux
+between approximately 17:36:59 and 17:37:21 on 2026-10-17.
+
+Elastic Security generated the threshold alert at approximately 17:40:15.
+
+The alert identified `192.168.100.245` as the originating IP address
+and recorded a threshold count of five.
+
+A review of Windows Event ID 4624 found no matching successful
+network logons from this IP during 17:30–18:00.
+
+**Final disposition:** True positive detection of benign,
+authorized security-testing activity. Alert closed.
+
+### SOC-WIN-002 Documentation
+
+Detection rule:
+
+[View SOC-WIN-002](../detection-rules/SOC-WIN-002.md)
+
+Investigation report:
+
+[View SOC-WIN-002 Investigation](../reports/SOC-WIN-002-investigation.md)
+
+### SOC-WIN-002 Known Limitations
+
+- Windows Logon Type 3 is not exclusive to RDP.
+- Grouping by source IP may combine users behind a shared NAT address.
+- Distributed authentication attempts across multiple source IPs may
+  evade the per-IP threshold.
+- Slow attempts outside the evaluation window may not trigger an alert.
+- The current query is restricted to `windows-client`.
+- Production false-positive tuning remains outstanding.
+
 ### Future Detection Engineering
 
-SOC-WIN-002 will focus on remote Windows authentication failures,
-source-IP correlation, and controlled testing originating from Kali Linux.
+Future work will investigate distributed password spraying,
+failed-to-successful authentication correlation, additional Windows
+endpoints, and AI-assisted SOC alert triage.
 
 ## Quality Gate
 
@@ -105,7 +175,10 @@ It must:
 6. Record the investigation outcome.
 7. Identify remaining validation requirements.
 
-SOC-WIN-001 has passed controlled local detection testing.
+SOC-WIN-001 has passed controlled local authentication testing.
 
-Remote attack simulation and production-like false-positive tuning
-remain future validation activities.
+SOC-WIN-002 has passed controlled remote authentication testing
+using Kali Linux and Windows RDP/NLA.
+
+Production-like false-positive tuning and broader multi-host
+validation remain future activities.

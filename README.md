@@ -2,7 +2,7 @@
 
 A hands-on blue-team portfolio project for collecting Windows, Linux, and web-server telemetry in Elastic Security, engineering detections, and documenting investigations.
 
-> **Status (October 2026):** Active development on a Dell laptop running Ubuntu Desktop 26.04.1. The laptop hosts an operational Elastic Security 9.5.5 environment using KVM/libvirt. Fleet Server and Windows Elastic Agent are healthy, Windows Security logs are being ingested, and the SOC-WIN-001 failed-logon detection rule has been successfully validated. The original Dell PowerEdge R710 environment, running Elasticsearch and Kibana 9.3.3, is currently offline pending repair.
+> **Status (October 2026):** Active development on a Dell laptop running Ubuntu Desktop 26.04.1. The laptop hosts an operational Elastic Security 9.5.5 environment using KVM/libvirt. Fleet Server and Windows Elastic Agent are healthy, Windows Security logs are being ingested, and SOC-WIN-001 and SOC-WIN-002 failed-logon detection rules have been successfully validated. The original Dell PowerEdge R710 environment, running Elasticsearch and Kibana 9.3.3, is currently offline pending repair.
 
 ## Objectives
 
@@ -26,10 +26,11 @@ A hands-on blue-team portfolio project for collecting Windows, Linux, and web-se
 | Fleet Server | Operational |
 | Elastic Agent | Healthy on `elastic-siem` and `windows-client` |
 | Windows endpoint | Windows Enterprise Evaluation VM |
+| Kali endpoint | Kali Linux 2026.2 VM — remote authentication testing validated |
 | Windows telemetry | Security Event IDs 4624 and 4625 validated |
-| Detection engineering | SOC-WIN-001 validated |
-| Investigation | Authorized local authentication test completed |
-| Network | Isolated `lab-net`, `192.168.100.0/24` |
+| Detection engineering | SOC-WIN-001 and SOC-WIN-002 validated |
+| Investigation | Local and remote authentication investigations completed |
+| Network | Isolated `lab-net` (`192.168.100.0/24`) and libvirt `default` NAT for selected VM internet access |
 
 ### Original SOC environment — Dell PowerEdge R710
 
@@ -42,7 +43,7 @@ A hands-on blue-team portfolio project for collecting Windows, Linux, and web-se
 | Availability | Offline pending repair |
 | Upgrade | To be evaluated after hardware restoration |
 
-The two environments are separate. The successful SOC-WIN-001 validation applies to the active laptop-based environment, not the currently offline R710.
+The two environments are separate. The successful SOC-WIN-001 and SOC-WIN-002 validations apply to the active laptop-based environment, not the currently offline R710.
 
 
 ## Repository map
@@ -88,12 +89,14 @@ This repository contains documentation and sanitized evidence only. It must neve
 
 - [SOC-WIN-001 — Multiple Failed Logon Attempts](detection-rules/SOC-WIN-001.md): Windows Event ID 4625 threshold detection.
 - [SOC-WIN-001 Investigation Report](reports/SOC-WIN-001-investigation.md): Authorized local authentication test, event correlation, source IP verification, and benign-positive classification.
+- [SOC-WIN-002 — Multiple Remote Failed Logon Attempts](detection-rules/SOC-WIN-002.md): Windows Event ID 4625, Logon Type 3, source-IP threshold detection validated using Kali Linux and RDP/NLA.
+- [SOC-WIN-002 Investigation Report](reports/SOC-WIN-002-investigation.md): Five remote authentication failures, successful alert generation, source-IP attribution, and benign-positive disposition.
 - [Detection evidence](screenshots/05-detection/README.md): Rule configuration, execution, and generated alert.
 - [Investigation evidence](screenshots/06-investigations/README.md): Windows authentication events and source IP analysis.
 
 ### Planned detection use cases
 
-- Kali Linux remote authentication simulation.
+- Failed-to-successful authentication correlation across Windows endpoints.
 - Windows privilege-group and privilege-use events.
 - Suspicious PowerShell and LOLBin execution.
 - Linux SSH authentication failures.
