@@ -177,9 +177,12 @@ Testing was performed exclusively within the authorized SOC homelab.
 Executed from Kali Linux:
 
 ```bash
+# Run this script in Kali Linux's default Zsh terminal.
+read -rs "SOC_TEST_PASSWORD?Enter disposable test password: "
+echo
 for i in {1..5}; do
     printf '\n=== SOC-WIN-002 Test Attempt %s/5 ===\n' "$i"
-    printf 'SOC-Lab-Invalid-Password\n' | xfreerdp3 \
+    printf "%s\n" "$SOC_TEST_PASSWORD" | xfreerdp3 \
         /v:192.168.100.183 \
         /u:SOC-Test-Remote-Invalid \
         /d:windows-client \
@@ -189,6 +192,7 @@ for i in {1..5}; do
         /from-stdin:force
     sleep 5
 done
+unset SOC_TEST_PASSWORD
 ```
 
 The `/cert:ignore` option bypasses RDP certificate verification.
