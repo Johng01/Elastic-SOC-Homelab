@@ -16,6 +16,12 @@ All notable repository changes are recorded here. Dates use YYYY-MM-DD.
 - Added references to the validated detection in the detection engineering,
   incident investigation, detection-rules, and reports documentation.
 
+- Created and validated SOC-WIN-002, a source-IP-grouped threshold
+  detection for repeated failed Windows network authentication.
+- Added SOC-WIN-002 detection documentation and investigation report.
+- Updated detection engineering, incident investigation, and project
+  overview documentation to include SOC-WIN-002.
+
 ### Changed
 
 - Updated the Windows failed-logon detection status from Planned to
@@ -24,6 +30,10 @@ All notable repository changes are recorded here. Dates use YYYY-MM-DD.
   secrets directories.
 - Documented the distinction between source events in Discover and aggregated
   threshold alerts.
+
+- Completed Kali Linux remote authentication detection validation.
+- Extended the documented detection coverage from local authentication
+  failures to remote source-IP-based authentication monitoring.
 
 ### Verified
 
@@ -34,14 +44,23 @@ All notable repository changes are recorded here. Dates use YYYY-MM-DD.
 - The source address `::1` was verified in Windows and Elasticsearch.
 - The investigated test alert was closed following authorized-test classification.
 
+- Five controlled RDP/NLA authentication failures were generated
+  from Kali Linux (192.168.100.245).
+- Windows Security Event ID 4625 recorded the originating IP
+  and Logon Type 3.
+- Elastic Security generated the SOC-WIN-002 threshold alert
+  with a matching event count of five.
+- No matching successful network logons from Kali were found
+  during the investigated 17:30–18:00 window on 2026-10-17.
+- The SOC-WIN-002 alert was classified as benign positive
+  and closed after investigation.
+
 ### Planned
 
 - Capture additional Kibana, Elasticsearch CA-trust, and browser TLS evidence.
 - Complete Linux agent onboarding.
 - Ingest web-server logs.
 - Add and validate Sigma detection rules.
-- Test remote authentication detection from Kali Linux.
-- Develop source-IP-focused authentication detections.
 - Add sanitized screenshots supporting SOC-WIN-001.
 
 ## [0.3.0] - 2026-10-08
