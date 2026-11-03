@@ -306,13 +306,13 @@ The rule achieved its primary functional detection objective and remains enabled
 
 ## 12. Future Improvements
 
-- Develop an equivalent Sigma detection rule.
+- Validate Sigma backend conversion and correlation execution if future portability requirements justify it.
 - Validate the rule against multiple targeted usernames.
 - Test repeated authentication failures followed by successful SSH authentication.
 - Evaluate duplicate-alert behavior.
 - Test additional authorized attack scenarios.
 - Review detection scheduling performance if future operational requirements justify it.
-- Preserve supporting screenshots and relevant sanitized authentication events.
+- Preserve the four captured evidence screenshots and any relevant sanitized authentication events.
 - Maintain the detection rule and investigation playbook under version control.
 
 ---
@@ -335,7 +335,7 @@ https://www.elastic.co/docs/solutions/security
 
 **Documentation Status:** Completed
 
-**Next Engineering Deliverable:** SOC-LIN-001 Sigma Detection Rule
+**Sigma Deliverable:** Detection and correlation rules created; pySigma parsing passed; Elasticsearch backend equivalence not independently tested.
 
 ---
 
