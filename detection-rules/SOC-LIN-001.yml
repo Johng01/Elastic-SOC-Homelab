@@ -1,0 +1,72 @@
+title: Linux SSH Failed Password Authentication
+name: soc_lin_001_failed_ssh_password
+id: 7f5cc9be-4f28-46ac-bfa1-84b090c4c139
+status: experimental
+description: >
+  Identifies individual failed SSH password authentication
+  events collected from the Ubuntu SOC target through the
+  Elastic System integration.
+author: Elastic SOC Homelab
+date: 2026-11-03
+
+logsource:
+    product: linux
+    service: sshd
+
+detection:
+    selection:
+        host.name: ubuntu-soc-target
+        event.dataset: system.auth
+        process.name: sshd
+        event.action: ssh_login
+        event.outcome: failure
+        message|contains: 'Failed password'
+    condition: selection
+
+fields:
+    - source.ip
+    - user.name
+    - host.name
+    - event.outcome
+    - message
+
+falsepositives:
+    - Authorized penetration testing
+    - Repeated administrative authentication mistakes
+    - Automated processes using outdated credentials
+
+level: medium
+
+tags:
+    - attack.credential-access
+    - attack.t1110
+
+---
+title: SOC-LIN-001 - Multiple Failed SSH Login Attempts
+id: 92c90630-b3f0-4d18-a0b9-537b98a9b721
+status: experimental
+description: >
+  Detects five or more failed SSH password authentication
+  events originating from the same source IP address
+  within a six-minute correlation window.
+
+correlation:
+    type: event_count
+    rules:
+        - soc_lin_001_failed_ssh_password
+    group-by:
+        - source.ip
+    timespan: 6m
+    condition:
+        gte: 5
+
+falsepositives:
+    - Authorized SSH authentication testing
+    - Approved vulnerability assessments
+    - Repeated incorrect passwords from legitimate users
+
+level: medium
+
+tags:
+    - attack.credential-access
+    - attack.t1110

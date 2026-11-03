@@ -75,3 +75,7 @@ Thumbs.db
 **/secrets/
 **/.credentials/
 **/.secrets/
+
+.venv/
+
+/detection-rules/rules_export.ndjson
