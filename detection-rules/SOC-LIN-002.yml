@@ -1,0 +1,78 @@
+title: Linux Sudo PAM Authentication Failure
+name: soc_lin_002_failed_sudo_authentication
+id: 5a01a4c5-5a6a-4ed8-9ad3-b61db4c52a01
+status: experimental
+description: >
+  Identifies genuine failed sudo PAM authentication events
+  on the monitored Ubuntu SOC target. Excludes sudo command
+  invocation records that merely contain authentication
+  failure text in their command arguments.
+author: Elastic SOC Homelab
+date: 2026-11-04
+
+logsource:
+    product: linux
+    service: sudo
+
+detection:
+    selection:
+        host.name: ubuntu-soc-target
+        event.dataset: system.auth
+        process.name: sudo
+        event.action: authentication_failure
+        event.outcome: failure
+        message|contains: 'pam_unix(sudo:auth): authentication failure'
+
+    filter_command:
+        message|contains: 'COMMAND='
+
+    condition: selection and not filter_command
+
+fields:
+    - user.name
+    - host.name
+    - event.action
+    - event.outcome
+    - process.name
+    - message
+
+falsepositives:
+    - Authorized sudo authentication testing
+    - Legitimate administrative password mistakes
+    - Authentication attempts following password changes
+
+level: medium
+
+tags:
+    - attack.privilege-escalation
+    - attack.t1548.003
+
+---
+title: SOC-LIN-002 - Multiple Failed Sudo Authentication Attempts
+id: 8c3f72b0-70b5-40b7-bfa5-ae19d74c2b02
+status: experimental
+description: >
+  Detects three or more genuine sudo PAM authentication
+  failure events associated with the same username
+  within a six-minute correlation window.
+
+correlation:
+    type: event_count
+    rules:
+        - soc_lin_002_failed_sudo_authentication
+    group-by:
+        - user.name
+    timespan: 6m
+    condition:
+        gte: 3
+
+falsepositives:
+    - Authorized laboratory authentication testing
+    - Repeated incorrect sudo passwords
+    - Legitimate users experiencing authentication difficulties
+
+level: medium
+
+tags:
+    - attack.privilege-escalation
+    - attack.t1548.003
