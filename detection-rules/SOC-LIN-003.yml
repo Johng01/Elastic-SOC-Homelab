@@ -1,0 +1,147 @@
+title: Linux Sudo Authentication Failure for Sequence Correlation
+name: soc_lin_003_sudo_failure
+id: 7a0e4726-295b-4d3d-b8b5-8cf32aa89e31
+status: experimental
+description: >
+  Identifies sudo authentication failure events used as
+  the first stage of SOC-LIN-003 correlation.
+author: Elastic SOC Homelab
+date: 2026-11-05
+
+logsource:
+    product: linux
+    service: sudo
+
+detection:
+    selection:
+        host.name: ubuntu-soc-target
+        event.dataset: system.auth
+        event.category: authentication
+        process.name: sudo
+        event.action: authentication_failure
+        event.outcome: failure
+
+    filter_command:
+        system.auth.sudo.command|exists: true
+
+    condition: selection and not filter_command
+
+fields:
+    - host.name
+    - user.name
+    - event.action
+    - event.outcome
+    - message
+
+falsepositives:
+    - Authorized laboratory authentication testing
+    - Administrative password mistakes
+
+level: low
+
+tags:
+    - attack.privilege-escalation
+    - attack.t1548.003
+
+---
+title: Linux Root-Level Sudo Command Invocation
+name: soc_lin_003_sudo_root_command
+id: 1df1e9de-470f-44ac-916c-21b89c15c9a7
+status: experimental
+description: >
+  Identifies parsed sudo command-invocation records requesting
+  root privileges. A matching event does not independently
+  establish successful command completion.
+author: Elastic SOC Homelab
+date: 2026-11-05
+
+logsource:
+    product: linux
+    service: sudo
+
+detection:
+    selection:
+        host.name: ubuntu-soc-target
+        event.dataset: system.auth
+        event.category: process
+        event.type: start
+        process.name: sudo
+        system.auth.sudo.user: root
+        system.auth.sudo.command|exists: true
+
+    filter_validate:
+        system.auth.sudo.command: validate
+
+    filter_failure:
+        event.outcome: failure
+
+    condition: selection and not 1 of filter_*
+
+fields:
+    - host.name
+    - user.name
+    - system.auth.sudo.command
+    - system.auth.sudo.user
+    - system.auth.sudo.tty
+    - system.auth.sudo.pwd
+
+falsepositives:
+    - Routine authorized administrative activity
+    - Approved maintenance and security testing
+
+level: low
+
+tags:
+    - attack.privilege-escalation
+    - attack.t1548.003
+
+---
+title: SOC-LIN-003 - Repeated Sudo Authentication Failures
+name: soc_lin_003_failure_burst
+id: 3d2c61a7-7c4e-4d64-9b6c-8a6a2915e74b
+status: experimental
+description: >
+  Identifies at least three sudo authentication-failure events
+  associated with the same host and username within ten minutes.
+correlation:
+    type: event_count
+    rules:
+        - soc_lin_003_sudo_failure
+    group-by:
+        - host.name
+        - user.name
+    timespan: 10m
+    condition:
+        gte: 3
+level: medium
+tags:
+    - attack.privilege-escalation
+    - attack.t1548.003
+
+---
+title: SOC-LIN-003 - Sudo Failures Followed by Root Command
+id: 4fbef7d3-9a42-476e-8e85-3a7de80ab619
+status: experimental
+description: >
+  Represents an ordered correlation between a burst of
+  at least three sudo authentication failures and a subsequent
+  root-level sudo command invocation associated with the same
+  host and username. Backend execution and exact equivalence
+  to the native EQL rule have not been validated.
+correlation:
+    type: temporal_ordered
+    rules:
+        - soc_lin_003_failure_burst
+        - soc_lin_003_sudo_root_command
+    group-by:
+        - host.name
+        - user.name
+    timespan: 10m
+level: medium
+falsepositives:
+    - Authorized laboratory testing
+    - Legitimate administrative password mistakes
+    - Administrative troubleshooting
+tags:
+    - attack.privilege-escalation
+    - attack.t1548.003
