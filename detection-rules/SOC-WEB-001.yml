@@ -1,0 +1,63 @@
+title: SOC-WEB-001 - Web Reconnaissance and Suspicious URL Requests
+name: soc_web_001_suspicious_url_requests
+id: 8d2ef72c-0d8c-4d52-9c24-5f789d7e9b41
+status: experimental
+description: >
+    Detects HTTP requests targeting potentially sensitive web
+    resources, including environment configuration files,
+    Git repository metadata, server-status endpoints,
+    WordPress administration paths, and phpMyAdmin interfaces.
+
+    A matching request may indicate reconnaissance or
+    information-gathering activity but does not independently
+    establish malicious intent or successful exploitation.
+
+    This rule reflects the SOC-WEB-001 laboratory detection
+    implemented in Elastic Security.
+
+author: Elastic SOC Homelab
+date: 2026-11-17
+
+references:
+    - https://attack.mitre.org/techniques/T1595/
+
+logsource:
+    category: webserver
+    product: linux
+    service: nginx
+
+detection:
+    selection:
+        event.dataset: nginx.access
+        host.name: ubuntu-soc-target
+        url.path:
+            - '/.env'
+            - '/.git/config'
+            - '/server-status'
+            - '/wp-admin/'
+            - '/phpmyadmin/'
+
+    condition: selection
+
+fields:
+    - '@timestamp'
+    - host.name
+    - source.ip
+    - url.path
+    - url.original
+    - http.request.method
+    - http.response.status_code
+    - user_agent.original
+
+falsepositives:
+    - Authorized vulnerability scanning
+    - Approved penetration testing
+    - Legitimate administrative troubleshooting
+    - Automated asset discovery and monitoring
+    - Authorized security training and laboratory simulations
+
+level: medium
+
+tags:
+    - attack.reconnaissance
+    - attack.t1595
