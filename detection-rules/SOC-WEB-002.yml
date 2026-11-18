@@ -1,0 +1,139 @@
+title: SOC-WEB-002 - Nginx HTTP 404 Source Events
+name: soc_web_002_nginx_404
+id: 2de9e18a-0d82-4dd1-a282-94d2919c8801
+status: experimental
+description: >
+    Identifies Nginx HTTP 404 responses originating from clients
+    with populated source IP and requested URL-path fields.
+
+    This base rule supplies events for SOC-WEB-002 experimental
+    Sigma correlation components.
+
+author: Elastic SOC Homelab
+date: 2026-11-18
+
+references:
+    - https://attack.mitre.org/techniques/T1595/
+
+logsource:
+    category: webserver
+    product: linux
+    service: nginx
+
+detection:
+    selection:
+        event.dataset: nginx.access
+        host.name: ubuntu-soc-target
+        http.response.status_code: 404
+
+    source_present:
+        source.ip|exists: true
+
+    path_present:
+        url.path|exists: true
+
+    condition: selection and source_present and path_present
+
+fields:
+    - '@timestamp'
+    - host.name
+    - source.ip
+    - url.path
+    - http.request.method
+    - http.response.status_code
+    - user_agent.original
+
+falsepositives:
+    - Broken website links
+    - Missing application resources
+    - Legitimate web crawlers
+    - Authorized security testing
+    - Administrative troubleshooting
+
+level: low
+
+tags:
+    - attack.reconnaissance
+    - attack.t1595
+
+---
+title: SOC-WEB-002 - Repeated HTTP 404 Event Count
+name: soc_web_002_event_count
+id: 2c58c67a-e2b0-4696-a77e-d913225fe831
+status: experimental
+description: >
+    Identifies at least ten matching HTTP 404 events associated
+    with the same source IP and hostname within six minutes.
+
+    This correlation represents only the event-count component
+    of SOC-WEB-002. It does not enforce URL-path cardinality.
+
+author: Elastic SOC Homelab
+date: 2026-11-18
+
+correlation:
+    type: event_count
+    rules:
+        - soc_web_002_nginx_404
+    group-by:
+        - source.ip
+        - host.name
+    timespan: 6m
+    condition:
+        gte: 10
+
+level: medium
+
+falsepositives:
+    - Repeated broken-link requests
+    - Automated monitoring
+    - Legitimate web crawlers
+    - Authorized laboratory testing
+
+tags:
+    - attack.reconnaissance
+    - attack.t1595
+
+---
+title: SOC-WEB-002 - Distinct HTTP 404 URL Paths
+name: soc_web_002_path_cardinality
+id: 13f29c22-65bb-40fb-aab1-e51283bd5370
+status: experimental
+description: >
+    Identifies at least five distinct requested URL paths
+    producing matching HTTP 404 events for the same source
+    IP and hostname within six minutes.
+
+    This correlation represents only the distinct-path
+    component of SOC-WEB-002.
+
+    It does not enforce a minimum total event count of ten.
+
+author: Elastic SOC Homelab
+date: 2026-11-18
+
+correlation:
+    type: value_count
+    rules:
+        - soc_web_002_nginx_404
+    group-by:
+        - source.ip
+        - host.name
+    timespan: 6m
+    condition:
+        field: url.path
+        gte: 5
+
+level: medium
+
+falsepositives:
+    - Legitimate web crawlers
+    - Broken application links
+    - Authorized vulnerability scanning
+    - Administrative troubleshooting
+    - Laboratory simulations
+
+tags:
+    - attack.reconnaissance
+    - attack.t1595
+    - attack.t1595.002
