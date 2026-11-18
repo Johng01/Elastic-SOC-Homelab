@@ -1,0 +1,77 @@
+title: SOC-WEB-003 - Potential Path Traversal in HTTP Requests
+name: soc_web_003_path_traversal
+id: 0d9c5d22-eacf-4fb3-986f-035e09a0517d
+status: experimental
+
+description: >
+    Detects HTTP requests containing potential directory traversal
+    indicators in Nginx access logs.
+
+    The detection examines URL-encoded parent-directory indicators
+    in url.original and decoded parent-directory components in
+    url.path.
+
+    A matching event indicates that a suspicious request pattern
+    was observed. It does not establish successful exploitation,
+    unauthorized file access, or system compromise.
+
+    The rule was developed and tested in the Elastic SOC Homelab.
+    The native Elastic Security Custom Query implementation is
+    the authoritative laboratory-validated detection.
+
+author: Elastic SOC Homelab
+date: 2026-11-18
+
+references:
+    - https://attack.mitre.org/techniques/T1190/
+    - https://sigmahq.io/sigma-specification/
+
+logsource:
+    category: webserver
+    product: linux
+    service: nginx
+
+detection:
+    selection_base:
+        event.dataset: nginx.access
+        host.name: ubuntu-soc-target
+
+    selection_source:
+        source.ip|exists: true
+
+    selection_traversal_encoded:
+        url.original|contains: '%2E%2E'
+
+    selection_traversal_decoded:
+        url.path|contains: '/../'
+
+    condition: >
+        selection_base and
+        selection_source and
+        1 of selection_traversal_*
+
+fields:
+    - '@timestamp'
+    - source.ip
+    - host.name
+    - url.original
+    - url.path
+    - url.query
+    - http.request.method
+    - http.response.status_code
+    - user_agent.original
+
+falsepositives:
+    - Authorized penetration testing
+    - Security scanner activity
+    - Application development and debugging
+    - Legitimate relative path requests
+    - URL normalization testing
+    - Administrative troubleshooting
+    - Authorized laboratory simulations
+
+level: medium
+
+tags:
+    - attack.initial-access
+    - attack.t1190
