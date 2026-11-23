@@ -1,0 +1,50 @@
+title: SOC-LIN-004 - Linux Account Creation and Privilege Modification
+name: soc_lin_004_audited_account_management
+id: 42cddaa9-8678-40a5-995a-381d9d299271
+status: experimental
+description: >
+    Detects successful Linux audited syscalls for useradd or usermod
+    against the SOC-LIN-004 account-management audit key.
+    This detects account-management activity rather than proof of
+    privilege escalation or completed user-account creation.
+    Native Elastic threshold grouping, scheduling, and alert
+    aggregation are not expressed by this standalone Sigma rule.
+author: Elastic SOC Homelab
+date: 2026-11-23
+references:
+    - https://attack.mitre.org/techniques/T1136/001/
+    - https://sigmahq.io/sigma-specification/
+logsource:
+    product: linux
+    service: auditd
+detection:
+    selection_base:
+        event.dataset: auditd.log
+        host.name: ubuntu-soc-target
+        auditd.log.record_type: SYSCALL
+        auditd.log.key: soc_lin_004_account_change
+        auditd.log.success: true
+    selection_process:
+        process.executable:
+            - /usr/sbin/useradd
+            - /usr/sbin/usermod
+    condition: selection_base and selection_process
+fields:
+    - '@timestamp'
+    - host.id
+    - host.name
+    - process.pid
+    - process.executable
+    - user.audit.name
+    - user.effective.name
+    - auditd.log.key
+    - auditd.log.sequence
+falsepositives:
+    - Authorized Linux user provisioning and maintenance
+    - Approved group or shell changes by administrators
+    - Configuration management or package deployment
+    - Authorized SOC homelab simulations
+level: medium
+tags:
+    - attack.persistence
+    - attack.t1136.001
